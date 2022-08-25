@@ -41,3 +41,15 @@ code {
   border: 1px solid #d9d9d9;
   padding: 10px;
 }
+
+.modal_bg {
+  position: 'absolute' as 'absolute';
+  background: #fff;
+  width: 300px;
+  color: #000;
+  padding: 10px 20px;
+  border: 1px solid black;
+  top: 50%;
+  left: 50%;
+  transform: translate(120%, -130%);
+}

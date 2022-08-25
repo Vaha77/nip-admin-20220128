@@ -13,8 +13,10 @@ import { API } from '../../configs/api'
 
 import { Select, MenuItem } from '@mui/material'
 import { net } from '../../configs/net'
-
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 const AuctionList = () => {
+
   const [value, setValue] = React.useState('1')
   let [listlist, setlistlist] = useState([])
   const [count, setCount] = useState(0)
@@ -25,12 +27,16 @@ const AuctionList = () => {
   const handleRows = (event: SelectChangeEvent<{ value: any }>) => {
     setRows(event.target.value)
   }
+  const [manualModal, setManualModal] = useState(false);
+  const [status, setStatus] = useState('');
+
+
 
   const fetchData = () => {
     axios
       .get(
         API.API_RECEIVABLES +
-          `/${net}/${page * rows}/${rows}/id/DESC?nettype=${net}`,
+        `/${net}/${page * rows}/${rows}/id/DESC?nettype=${net}`,
         {
           params: { date0: value[0], date1: value[1], searchkey },
         },
@@ -56,15 +62,22 @@ const AuctionList = () => {
     setValue(newValue)
   }
 
+  const handleOpen = (b: any) => {
+    setManualModal(b)
+  }
+
   const onClick_ManauallyPay_Btn = (uuid: any) => {
     axios
       .post(API.API_MANUAL_PAYITEM + `/${uuid}?nettype=${net}`, uuid)
       .then((resp) => {
         if (resp.data.status === 'OK') {
+
           fetchData()
-          alert('Succeed')
+          setStatus("Successfully paid!")
+          setManualModal(true)
         } else {
-          alert('Fail')
+          setStatus("Failed to pay");
+          setManualModal(true)
         }
       })
       .catch((error: any) => console.log(error))
@@ -174,6 +187,36 @@ const AuctionList = () => {
                         </td>
                       </tr>
                     ))}
+
+                  {/* <tr>
+                    <td className="nft-td" rowSpan={1}>
+                      id
+                    </td>
+
+                    <td className="nft-td" rowSpan={1}>
+                      creade
+                    </td>
+                    <td className="nft-td">username</td>
+                    <td className="nft-td">item</td>
+                    <td className="nft-td">
+                      amunt
+                    </td>
+                    <td className="nft-td">rund</td>
+                    <td className="nft-td"> duetimeunix</td>
+                    <td className="nft-td"> duetime</td>
+                    <td className="nft-td" rowSpan={1}>
+                      <button
+                        style={{
+                          marginRight: '20px',
+                          height: '40px',
+                          cursor: 'pointer',
+                        }}
+                        onClick={handleOpen}
+                      >
+                        manually pay
+                      </button>
+                    </td>
+                  </tr> */}
                 </tbody>
               </table>
             </div>
@@ -196,9 +239,30 @@ const AuctionList = () => {
                 ''
               )}
             </div>
+            {manualModal && (<>
+
+
+
+
+              <div className='modal_bg' onClick={() => handleOpen(false)}>
+
+                <div >
+
+                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    {status}
+                  </Typography>
+                  <hr />
+                  <Button sx={{ margin: "0  0 0 180px" }} onClick={() => handleOpen(true)} variant="contained">ok</Button>
+
+                </div>
+              </div>
+
+
+            </>)}
           </TabContext>
         </Box>
       </Papers>
+
     </>
   )
 }
